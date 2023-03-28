@@ -1,0 +1,13 @@
+#spring:
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: 127.0.0.1:8848
+#  application:
+#    name: gulimall-third-party
+#server:
+#  port: 30000
+#oss:
+#  accessKey: uJ_q9TsR3taShtdjzUUoU75fIh5OBYOyREVtwmUR
+#  secretKey: XCKw6c0Y3nju8SXFr1C_VD0w32q1AHorcTXNmSkT
+#  bucket: singularl223
