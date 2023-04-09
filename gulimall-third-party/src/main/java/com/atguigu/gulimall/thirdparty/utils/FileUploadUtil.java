@@ -58,7 +58,50 @@ public class FileUploadUtil {
                 DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
 //                System.out.println(putRet.key);
 //                System.out.println(putRet.hash);
+                //返回 域名+ 七牛云返回来的key值
                 return properties.getHostName()+putRet.key;
+            } catch (QiniuException ex) {
+                Response r = ex.response;
+                System.err.println(r.toString());
+                try {
+                    System.err.println(r.bodyString());
+                } catch (QiniuException ex2) {
+                    //ignore
+                }
+            }
+        } catch (Exception ex) {
+            //ignore
+        }
+    return null;
+    }
+    public String uploadByFileOrgin(byte[]bytes){
+        //构造一个带指定 Region 对象的配置类
+        Configuration cfg = new Configuration(Region.autoRegion());;
+        //...其他参数参考类注释
+
+        UploadManager uploadManager = new UploadManager(cfg);
+        //...生成上传凭证，然后准备上传
+        String accessKey = properties.getAccessKey();
+        String secretKey = properties.getSecretKey();
+        String bucket = properties.getBucket();
+
+        //默认不指定key的情况下，以文件内容的hash值作为文件名
+        //获取当前日期作为文件夹名
+        String key = null;
+
+        try {
+//            byte[] uploadBytes = "hello qiniu cloud".getBytes("utf-8");
+//            ByteArrayInputStream byteInputStream = new ByteArrayInputStream(uploadBytes);
+
+            Auth auth = Auth.create(accessKey, secretKey);
+            String upToken = auth.uploadToken(bucket);
+            try {
+                Response response = uploadManager.put(bytes, key, upToken);
+                //解析上传成功的结果
+                DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
+//                System.out.println(putRet.key);
+//                System.out.println(putRet.hash);
+                return putRet.hash;
             } catch (QiniuException ex) {
                 Response r = ex.response;
                 System.err.println(r.toString());
